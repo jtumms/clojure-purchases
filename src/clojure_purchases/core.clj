@@ -19,6 +19,21 @@
                       purchases)]
          purchases))
 
+(defn header []
+  [:h2
+               [:a {:href "/Alcohol"} "Alcohol"]
+               " "
+               [:a {:href "/Shoes"} "Shoes"]
+               " "
+               [:a {:href "/Furniture"} "Furniture"]
+               " "
+               [:a {:href "/Jewelry"} "Jewelry"]
+               " "
+               [:a {:href "/Food"} "Food"]])
+            
+            
+  
+
 ; customer_id,date,credit_card,cvv,category
 (defn purchases-html [category]
   (let [purchases (read-purchases)
@@ -26,32 +41,36 @@
                             (or (nil? category)
                                 (= category (get purchase "category"))))
                     purchases)]
-    [:ol
+    [:table
+     [:tr
+      [:th "ID"]
+      [:th "Date"]
+      [:th "Credit Card"]
+      [:th "CVV"]
+      [:th "Category"]]
      (map (fn [purchase]
-            [:li (str
-                   (get purchase "customer_id")
-                   " "
-                   (get purchase "date")
-                   " "
-                   (get purchase "credit_card")
-                   " "
-                   (get purchase "cvv")
-                   " "
-                   (get purchase "category"))])
+            [:tr 
+             [:td (get purchase "customer_id")]
+             [:td (get purchase "date")]
+             [:td (get purchase "credit_card")]
+             [:td (get purchase "cvv")]
+             [:td (get purchase "category")]])
        purchases)]))
        
   
     
 (c/defroutes app
   (c/GET "/" []
-    (h/html [:html [:body (purchases-html nil)]]))
+    (h/html [:html
+             [:body (header)
+              (purchases-html nil)]]))
   (c/GET "/:category" [category]
     (h/html [:html
-             [:body
-              (purchases-html category)]]))
+             [:body (header)
+              (purchases-html category)]])))
 
 
-  (def server (atom nil)))
+(def server (atom nil))
 
 (defn dev []
   (let [s (deref server)]
